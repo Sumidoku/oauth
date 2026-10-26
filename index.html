@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Sumidoku OAuth relay</title>
+</head>
+<body>
+<p>
+This is the OAuth callback relay of <a href="https://github.com/Sumidoku/Sumidoku">Sumidoku</a>.
+Tracker providers (AniList, MyAnimeList, Bangumi, MangaBaka) only accept
+pre-registered redirect URIs, which a self-hosted instance cannot have; this
+fixed endpoint receives the provider callback and forwards it to the instance
+that started the sign-in. It is only ever useful as the target of a tracker
+sign-in flow — if you arrived here any other way, there is nothing to do.
+</p>
+</body>
+</html>

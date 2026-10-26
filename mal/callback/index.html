@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Sumidoku OAuth relay</title>
+</head>
+<body>
+<script>
+// Relay for tracker OAuth callbacks. Providers only accept pre-registered
+// redirect URIs, so every self-hosted Sumidoku instance shares this fixed
+// endpoint: the provider returns here, and this page bounces the browser to
+// the instance's own callback, which is carried inside the OAuth state.
+// `code`, `state` and any error parameters are forwarded untouched.
+(function () {
+  var out = document.createElement("p");
+  document.body.appendChild(out);
+  function fail(message) {
+    out.textContent = "This is the Sumidoku OAuth callback relay. " + message;
+  }
+  var params = new URLSearchParams(location.search);
+  var rawState = params.get("state");
+  if (!rawState) {
+    fail("No OAuth state was supplied; nothing to relay.");
+    return;
+  }
+  var redirectUrl;
+  try {
+    redirectUrl = JSON.parse(rawState).redirectUrl;
+    var target = new URL(redirectUrl);
+    if (target.protocol !== "http:" && target.protocol !== "https:") {
+      throw new Error("bad protocol");
+    }
+  } catch (e) {
+    fail("The OAuth state is not recognized; nothing to relay.");
+    return;
+  }
+  params.forEach(function (value, key) {
+    target.searchParams.set(key, value);
+  });
+  out.innerHTML = 'Redirecting back to your Sumidoku instance&hellip; <a id="dest">continue</a> if nothing happens.';
+  document.getElementById("dest").href = target.toString();
+  location.replace(target.toString());
+})();
+</script>
+</body>
+</html>
